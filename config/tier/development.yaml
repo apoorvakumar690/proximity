@@ -10,5 +10,5 @@ user:
   ratingsUrl: "http://www.mocky.io/v2/5edbe434320000b5ad5d282f"
   favouritesUrl: ":5001"
 mongo:
-  url: "mongodb+srv://syi:4Crdk4vEAu5VYmhC@idya-vmq84.mongodb.net/syi?retryWrites=true&w=majority"
+  url: ""
   database: "syi"
