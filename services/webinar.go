@@ -5,30 +5,26 @@ import (
 	"proximity/repo"
 )
 
-// UserInterface ...
-type UserInterface interface {
-	GetAllBadWords(skip int, limit int) ([]string, error)
+// WebinarInterface ...
+type WebinarInterface interface {
 }
 
-//NewUserService ..
-func NewUserService(conf config.IConfig, userDb repo.UserRepoInterface) CmsInterface {
-	return &Cms{config: conf, user: userDb}
+//NewWebinarService ..
+func NewWebinarService(conf config.IConfig, userDb repo.UserRepoInterface) WebinarInterface {
+	return &Webinar{config: conf, user: userDb}
 }
 
-// GetRole .. get role of a user
-func (i *Cms) GetRole(userName string) (role string, err error) {
-	wds, err := i.user.GetOne(userName)
-	if err != nil {
-		return nil, err
-	}
-	for _, w := range wds {
-		words = append(words, w.Word)
-	}
-	return words, nil
+// Upload ..
+func (i *Webinar) Upload(userName string) (err error) {
+	/**
+	verify metadata
+	upload to blob storage
+	**/
+	return nil
 }
 
 // User ..
-type User struct {
+type Webinar struct {
 	config config.IConfig
 	user   repo.UserRepoInterface
 }

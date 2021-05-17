@@ -40,18 +40,18 @@ func NewMongoDB(config config.IConfig) (MongoDBI, error) {
 		return nil, err
 	}
 	fmt.Println("Connected to mongo " + config.Get().Mongo.URL)
-	return &RnRMongoDB{client: client, database: config.Get().Mongo.Database}, err
+	return &MongoDB{client: client, database: config.Get().Mongo.Database}, err
 }
 
-// RnRMongoDB ..
-type RnRMongoDB struct {
+// MongoDB ..
+type MongoDB struct {
 	client   *mongo.Client
 	database string
 	err      error
 }
 
 //InsertOne function
-func (r *RnRMongoDB) InsertOne(collection string, i interface{}) (*mongo.InsertOneResult, error) {
+func (r *MongoDB) InsertOne(collection string, i interface{}) (*mongo.InsertOneResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -59,7 +59,7 @@ func (r *RnRMongoDB) InsertOne(collection string, i interface{}) (*mongo.InsertO
 }
 
 //UpdateOne function
-func (r *RnRMongoDB) UpdateOne(collection string, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
+func (r *MongoDB) UpdateOne(collection string, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -67,7 +67,7 @@ func (r *RnRMongoDB) UpdateOne(collection string, filter interface{}, update int
 }
 
 //FindOne function
-func (r *RnRMongoDB) FindOne(collection string, filter interface{}) *mongo.SingleResult {
+func (r *MongoDB) FindOne(collection string, filter interface{}) *mongo.SingleResult {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -75,7 +75,7 @@ func (r *RnRMongoDB) FindOne(collection string, filter interface{}) *mongo.Singl
 }
 
 //DeleteOne function
-func (r *RnRMongoDB) DeleteOne(collection string, i primitive.M) (*mongo.DeleteResult, error) {
+func (r *MongoDB) DeleteOne(collection string, i primitive.M) (*mongo.DeleteResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -83,7 +83,7 @@ func (r *RnRMongoDB) DeleteOne(collection string, i primitive.M) (*mongo.DeleteR
 }
 
 //InsertMany function
-func (r *RnRMongoDB) InsertMany(collection string, i []interface{}) (*mongo.InsertManyResult, error) {
+func (r *MongoDB) InsertMany(collection string, i []interface{}) (*mongo.InsertManyResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -91,7 +91,7 @@ func (r *RnRMongoDB) InsertMany(collection string, i []interface{}) (*mongo.Inse
 }
 
 //UpdateMany function
-func (r *RnRMongoDB) UpdateMany(collection string, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
+func (r *MongoDB) UpdateMany(collection string, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -99,7 +99,7 @@ func (r *RnRMongoDB) UpdateMany(collection string, filter interface{}, update in
 }
 
 //FindMany function
-func (r *RnRMongoDB) FindMany(collection string, filter interface{}, result interface{}) (interface{}, error) {
+func (r *MongoDB) FindMany(collection string, filter interface{}, result interface{}) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -114,7 +114,7 @@ func (r *RnRMongoDB) FindMany(collection string, filter interface{}, result inte
 }
 
 //DeleteMany function
-func (r *RnRMongoDB) DeleteMany(collection string, filter interface{}) (*mongo.DeleteResult, error) {
+func (r *MongoDB) DeleteMany(collection string, filter interface{}) (*mongo.DeleteResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -122,7 +122,7 @@ func (r *RnRMongoDB) DeleteMany(collection string, filter interface{}) (*mongo.D
 }
 
 //FindOneAndUpdate function
-func (r *RnRMongoDB) FindOneAndUpdate(collection string, filter interface{}, updateDoc interface{}) *mongo.SingleResult {
+func (r *MongoDB) FindOneAndUpdate(collection string, filter interface{}, updateDoc interface{}) *mongo.SingleResult {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	update := bson.M{
@@ -133,7 +133,7 @@ func (r *RnRMongoDB) FindOneAndUpdate(collection string, filter interface{}, upd
 }
 
 //FindOneAndUpsert function
-func (r *RnRMongoDB) FindOneAndUpsert(collection string, filter interface{}, updateDoc interface{}) *mongo.SingleResult {
+func (r *MongoDB) FindOneAndUpsert(collection string, filter interface{}, updateDoc interface{}) *mongo.SingleResult {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	upsert := true
@@ -150,7 +150,7 @@ func (r *RnRMongoDB) FindOneAndUpsert(collection string, filter interface{}, upd
 }
 
 //FindManyAndPaginate function
-func (r *RnRMongoDB) FindManyAndPaginate(collection string, filter interface{}, skip int, limit int, column string, result interface{}) (interface{}, error) {
+func (r *MongoDB) FindManyAndPaginate(collection string, filter interface{}, skip int, limit int, column string, result interface{}) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -175,7 +175,7 @@ func (r *RnRMongoDB) FindManyAndPaginate(collection string, filter interface{}, 
 }
 
 // Pipe used for aggregation
-func (r *RnRMongoDB) Pipe(collection string, query []primitive.M, res interface{}) (interface{}, error) {
+func (r *MongoDB) Pipe(collection string, query []primitive.M, res interface{}) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)
@@ -196,7 +196,7 @@ func (r *RnRMongoDB) Pipe(collection string, query []primitive.M, res interface{
 }
 
 // FindAllAndSort find all documents with query in sorted order
-func (r *RnRMongoDB) FindAllAndSort(collection string, query, project interface{}, sortBy []string, result interface{}) error {
+func (r *MongoDB) FindAllAndSort(collection string, query, project interface{}, sortBy []string, result interface{}) error {
 	query, ok := query.(map[string]interface{})
 	if !ok {
 		return errors.New("Find All and Sort error")
@@ -229,7 +229,7 @@ func buildSortQuery(sortBy []string) interface{} {
 }
 
 //Count function
-func (r *RnRMongoDB) Count(collection string, filter interface{}) (int64, error) {
+func (r *MongoDB) Count(collection string, filter interface{}) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := r.client.Database(r.database).Collection(collection)

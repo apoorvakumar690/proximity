@@ -29,7 +29,7 @@ type UserRepo struct {
 
 // Insert .. Insert new User
 func (ur *UserRepo) Insert(u models.User) error {
-	_, err := ur.db.InsertOne(userColNmae, u)
+	_, err := ur.db.InsertOne(userColNmae)
 
 	if err != nil {
 		return err

@@ -5,45 +5,63 @@ import (
 	"proximity/models"
 	"proximity/pkg/clients/db"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const userColNmae = "badwords"
+const webinarColNmae = "webinar"
 
 // WebinarRepoInterface ..
 type WebinarRepoInterface interface {
-	Insert(u models.User) error
-	GetOne(userName string) (*models.User, error)
+	Insert(u models.WebinarMaster) error
+	GetAllWebinarWithId(filter primitive.M, skip int, limit int) ([]models.WebinarMaster, error)
+	UpdateOne(filter primitive.M, update primitive.M) error
+	DeleteOne(filter primitive.M) error
 }
 
-// NewUserRepo Create's an instance of a User Repository
-func NewUserRepo(conf config.IConfig, dbInstances *db.Instances) WebinarRepoInterface {
-	return &UserRepo{config: conf, db: dbInstances.RnrMongoDB}
+// NewWebinarRepo Create's an instance of a Webinr Repository
+func NewWebinarRepo(conf config.IConfig, dbInstances *db.Instances) WebinarRepoInterface {
+	return &WebinarRepo{config: conf, db: dbInstances.MongoDB}
 }
 
 // BadWordsRepo Contains methods to action on the User Repository
-type UserRepo struct {
+type WebinarRepo struct {
 	config config.IConfig
 	db     db.MongoDBI
 }
 
-// Insert .. Insert new User
-func (ur *UserRepo) Insert(u models.User) error {
-	_, err := ur.db.InsertOne(userColNmae, u)
-
+// Insert .. Insert new Webinar
+func (ur *WebinarRepo) Insert(u models.WebinarMaster) error {
+	_, err := ur.db.InsertOne(webinarColNmae, u)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// GetOne ..
-func (ur *UserRepo) GetOne(userName string) (*models.User, error) {
-	w := ur.db.FindOne(userColNmae, bson.M{"userName": userName})
+// UpdateOne ...
+func (ur *WebinarRepo) UpdateOne(filter primitive.M, update primitive.M) error {
+	_, err := ur.db.UpdateOne(webinarColNmae, filter, update)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
-	var s models.User
-	if err := w.Decode(&s); err != nil {
+// DeleteOne ...
+func (ur *WebinarRepo) DeleteOne(filter primitive.M) error {
+	_, err := ur.db.DeleteOne(webinarColNmae, filter)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetAllWebinarWithId ...
+func (ur *WebinarRepo) GetAllWebinarWithId(filter primitive.M, skip int, limit int) ([]models.WebinarMaster, error) {
+	var ws []models.WebinarMaster
+	_, err := ur.db.FindManyAndPaginate(webinarColNmae, filter, skip, limit, "updatedAt", &ws)
+	if err != nil {
 		return nil, err
 	}
-	return &s, nil
+	return ws, nil
 }

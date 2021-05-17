@@ -5,45 +5,63 @@ import (
 	"proximity/models"
 	"proximity/pkg/clients/db"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const userColNmae = "badwords"
+const courseColNmae = "course"
 
-// UserRepoInterface ..
-type UserRepoInterface interface {
-	Insert(u models.User) error
-	GetOne(userName string) (*models.User, error)
+// CourseRepoInterface ..
+type CourseRepoInterface interface {
+	Insert(u models.CourseMaster) error
+	GetAllCourseWithId(filter primitive.M, skip int, limit int) ([]models.CourseMaster, error)
+	UpdateOne(filter primitive.M, update primitive.M) error
+	DeleteOne(filter primitive.M) error
 }
 
-// NewUserRepo Create's an instance of a User Repository
-func NewUserRepo(conf config.IConfig, dbInstances *db.Instances) UserRepoInterface {
-	return &UserRepo{config: conf, db: dbInstances.RnrMongoDB}
+// NewCourseRepo Create's an instance of a Webinr Repository
+func NewCourseRepo(conf config.IConfig, dbInstances *db.Instances) CourseRepoInterface {
+	return &CourseRepo{config: conf, db: dbInstances.MongoDB}
 }
 
 // BadWordsRepo Contains methods to action on the User Repository
-type UserRepo struct {
+type CourseRepo struct {
 	config config.IConfig
 	db     db.MongoDBI
 }
 
-// Insert .. Insert new User
-func (ur *UserRepo) Insert(u models.User) error {
-	_, err := ur.db.InsertOne(userColNmae, u)
-
+// Insert .. Insert new Course
+func (ur *CourseRepo) Insert(u models.CourseMaster) error {
+	_, err := ur.db.InsertOne(courseColNmae, u)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// GetOne ..
-func (ur *UserRepo) GetOne(userName string) (*models.User, error) {
-	w := ur.db.FindOne(userColNmae, bson.M{"userName": userName})
+// UpdateOne ...
+func (ur *CourseRepo) UpdateOne(filter primitive.M, update primitive.M) error {
+	_, err := ur.db.UpdateOne(courseColNmae, filter, update)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
-	var s models.User
-	if err := w.Decode(&s); err != nil {
+// DeleteOne ...
+func (ur *CourseRepo) DeleteOne(filter primitive.M) error {
+	_, err := ur.db.DeleteOne(courseColNmae, filter)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetAllWebinarWithId ...
+func (ur *CourseRepo) GetAllCourseWithId(filter primitive.M, skip int, limit int) ([]models.CourseMaster, error) {
+	var ws []models.CourseMaster
+	_, err := ur.db.FindManyAndPaginate(courseColNmae, filter, skip, limit, "updatedAt", &ws)
+	if err != nil {
 		return nil, err
 	}
-	return &s, nil
+	return ws, nil
 }

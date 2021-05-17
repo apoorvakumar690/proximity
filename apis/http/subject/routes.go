@@ -15,8 +15,9 @@ func bindRoutes(router *gin.Engine, deps *shared.Deps) {
 	service := NewUserService(deps.Config, deps.Database, deps.HTTPRequester, deps.GrpcConn)
 	userAPI := router.Group("/users")
 	{
-		userAPI.GET("/get-role", service.getAll)
-		userAPI.GET("/get-access-list", service.getAll)
+		userAPI.GET("/", service.getAll)
 		userAPI.GET("/:userId", service.getOne)
+		userAPI.GET("/subject/", service.getWithInfo)
+		userAPI.POST("/", service.insert)
 	}
 }

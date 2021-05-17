@@ -2,7 +2,10 @@ package services
 
 import (
 	"proximity/config"
+	"proximity/models"
 	"proximity/repo"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 // CourseInterface ...
@@ -11,21 +14,21 @@ type CourseInterface interface {
 }
 
 //NewCourseService ..
-func NewCourseService(conf config.IConfig, userDb repo.UserRepoInterface) CmsInterface {
-	return &Cms{config: conf, user: userDb}
+func NewCourseService(conf config.IConfig, userDb repo.CourseRepoInterface) CourseInterface {
+	return &Course{config: conf, course: userDb}
 }
 
 // GetRole .. get role of a user
-func (i *Course) GetCourses() (courses [], err error) {
-	wds, err := i.course.GetMany(skip string)
+func (i *Course) GetCourses(skip int, limit int) (courses []models.CourseMaster, err error) {
+	crse, err := i.course.GetAllCourseWithId(bson.M{""}, skip, limit)
 	if err != nil {
 		return nil, err
 	}
-	return rold, nil
+	return crse, nil
 }
 
 // Course ..
 type Course struct {
 	config config.IConfig
-	user   repo.UserRepoInterface
+	course repo.CourseRepoInterface
 }

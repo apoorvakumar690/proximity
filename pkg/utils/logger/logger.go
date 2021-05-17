@@ -1,7 +1,7 @@
 package log
 
 import (
-	"ggithub.com/apoorvakumar690/go-logger"
+	"github.com/apoorvakumar690/go-logger"
 	"github.com/ralstan-vaz/go-errors"
 )
 
